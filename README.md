@@ -21,4 +21,4 @@ cd web && npm install && npm run dev
 cd infra && terraform init && terraform plan -var-file=terraform.tfvars
 ```
 
-Usuarios de prueba: `ana@sofka.com.co` / `luis@sofka.com.co`, contraseña `demo1234`.
+Usuarios de prueba: ver [`docs/usuarios-de-prueba.md`](docs/usuarios-de-prueba.md).

@@ -5,21 +5,30 @@
 convenciones**, que es justo lo que hace falta para que la jerarquía de memoria y los globs tengan
 sentido en vez de ser un ejemplo de juguete.
 
-**Nunca abrir `claude` en el repo del programa durante la sesión:** `MAPA_EVALUACION.md` contiene
-los enunciados del examen.
+**Dos avisos de confidencialidad:**
 
-## Ramas
+- **Nunca abrir `claude` en el repo del programa durante la sesión:** `MAPA_EVALUACION.md` contiene
+  los enunciados del examen.
+- **No compartir este repo tal cual con los participantes.** La carpeta `.instructor/` trae los IDs
+  de los ítems de examen y sus respuestas. Si querés entregárselo, `rm -rf .instructor` en una copia
+  primero.
 
-| Rama | Contenido | Uso |
+## Cómo está armado el repo
+
+**Todo está en `main`, ya configurado.** No se escribe nada en vivo: cada artefacto está escrito, se
+muestra en pantalla y se explica. Lo que sí es en vivo es el **comportamiento** — `/memory`, la carga
+de reglas, el ruteo entre skills. Eso no se puede contar, hay que verlo pasar.
+
+| Qué | Dónde | Qué enseña |
 |---|---|---|
-| `base` | El monorepo + la skill `sofka-branding` a nivel proyecto. **Sin `CLAUDE.md`, sin reglas** | Se abre en vivo. El repo llega con una skill y nada más |
-| `configurado` | Todo lo de `base` + `CLAUDE.md` raíz + los tres por directorio + 3 reglas + `/revisar-login` | Se revela a mitad del Bloque 1, y es la red de seguridad |
+| `CLAUDE.md` raíz | raíz | Solo lo transversal, y un `@import` |
+| `docs/usuarios-de-prueba.md` | `docs/` | El archivo que el raíz importa en vez de duplicar |
+| `web/CLAUDE.md` · `api/CLAUDE.md` · `infra/CLAUDE.md` | cada carpeta | Convenciones que **se contradicen entre sí** |
+| 3 reglas | `.claude/rules/` | Una empatada, dos imposibles para un `CLAUDE.md` de directorio |
+| 2 commands | `.claude/commands/` | Uno pelado, uno con `$ARGUMENTS` y `allowed-tools` |
+| 2 skills | `.claude/skills/` | Una sin `fork`, una con `fork` |
 
-```bash
-cd ~/dev/demo-s3 && git checkout base    # arrancar limpio
-git checkout configurado                  # revelar / caer de pie
-git checkout . && git checkout base       # volver a limpio si se ensució en vivo
-```
+Si algo se ensucia durante la sesión: `git checkout .` y todo vuelve.
 
 ## Antes de empezar (una sola vez)
 
@@ -32,66 +41,80 @@ cp -r ~/dev/demo-s3/.instructor/brutalist-branding ~/.claude/skills/
 
 | Nivel | Skill | Qué representa |
 |---|---|---|
-| Proyecto — `.claude/skills/` (versionado) | `sofka-branding` | Lo recibe todo el que clona |
+| Proyecto — `.claude/skills/` (versionado) | `sofka-branding` · `scaffold-endpoint` | Lo recibe todo el que clona |
 | Usuario — `~/.claude/skills/` (tu máquina) | `brutalist-branding` | Tu preferencia personal. No la recibe nadie |
 
-Comprobar con `/skills` que las dos cargan y de qué nivel viene cada una.
+Comprobar con `/skills` que las tres cargan y de qué nivel viene cada una.
 
-> ⚠️ Mientras `brutalist-branding` esté instalada, **todo pedido visual tuyo en cualquier repo** va a
-> salir en brutalismo neón salvo que digas "Sofka". Si estás preparando material con marca, sacala y
-> volvé a ponerla antes de la sesión.
-
----
+> ⚠️ Mientras `brutalist-branding` esté instalada, **todo pedido visual tuyo en cualquier repo** sale
+> en brutalismo neón salvo que digas "Sofka". Si preparás material con marca, sacala y volvé a
+> ponerla antes de la sesión.
 
 ## Bloque 1 — Memoria (0:12 – 0:35)
 
-1. `cd ~/dev/demo-s3 && claude` en la **raíz**.
-2. `/memory` → **vacío**.
-3. Recorrer el repo en 30 segundos: `web/` TypeScript, `api/` Python, `infra/` Terraform.
-   Y entonces la pregunta que arma todo el bloque:
+`cd ~/dev/demo-s3 && claude` desde la **raíz**.
 
-   > *"Voy a escribir el `CLAUDE.md` de este monorepo. ¿Meto las convenciones de TypeScript, de
-   > Python y de Terraform en un solo archivo en la raíz?"*
+### Paso 1 — `/memory`, y la sorpresa no es que esté vacío
 
-   Ese es el `PE-042` con el repo delante, no como enunciado de examen.
+Correrlo antes de explicar nada. Lo que aparece: el `CLAUDE.md` raíz, **más el archivo que importa**.
+Lo que **no** aparece: `web/CLAUDE.md`, `api/CLAUDE.md`, `infra/CLAUDE.md`.
 
-4. **El anti-patrón, y acá es mejor que el clásico "500 líneas de basura":** si las convenciones de
-   pytest viven en el `CLAUDE.md` raíz, se cargan también cuando Claude trabaja en `web/`, donde el
-   runner es **vitest**. No es solo desperdicio de contexto: es una **instrucción incorrecta cargada
-   en el contexto equivocado**. El costo de mezclar no es estético, es que el agente recibe reglas
-   que no aplican.
+> *"Este repo tiene cuatro `CLAUDE.md`. ¿Por qué `/memory` me muestra uno?"*
 
-5. Escribir el `CLAUDE.md` raíz **en vivo y corto** — solo lo transversal:
+Esa selectividad es todo el bloque. Y de paso queda instalado `/memory` como **la herramienta de
+diagnóstico**: cuando el comportamiento es inconsistente entre sesiones, esto es lo primero que se
+corre. Ese es el `EX-040`.
+
+### Paso 2 — los cuatro archivos en pantalla, en orden
+
+Abrirlos y leer una línea de cada uno. Lo que hay que hacer notar:
+
+- **Raíz** — solo lo transversal: qué es cada carpeta, que no se cruzan fronteras, commits en
+  español. **Nada de TypeScript, nada de Python, nada de Terraform.**
+- **`web/CLAUDE.md`** — `strict` sin `any`, todo `fetch` por `src/api.ts`, tests con **vitest**.
+- **`api/CLAUDE.md`** — `uv run`, sin lógica en `main.py`, tests con **pytest**.
+- **`infra/CLAUDE.md`** — nombres `sofka-<entorno>-<recurso>`, nunca `apply` sin `plan`.
+
+### Paso 3 — la pregunta que justifica la jerarquía
+
+> *"¿Por qué no está todo esto junto en el raíz? Sería un archivo y se acabó."*
+
+Y la respuesta está en dos líneas del propio repo: **`web` dice vitest y `api` dice pytest.** Juntas
+en el raíz, se cargan **siempre las dos**, y el agente recibe el runner equivocado la mitad del
+tiempo. El costo de mezclar no es estético ni de tokens: es **una instrucción incorrecta cargada en
+el contexto equivocado**. Ese es el `PE-042` con el repo delante, y es más fuerte que "un `CLAUDE.md`
+de 500 líneas es desordenado".
+
+### Paso 4 — demostrar que la ubicación es el disparador
+
+Dos pedidos y dos `/memory`:
+
+| Pedido | `/memory` muestra |
+|---|---|
+| Un cambio en `api/app/auth.py` | raíz + **`api/CLAUDE.md`** |
+| Un cambio en `web/src/login.ts` | raíz + **`web/CLAUDE.md`** |
+
+Nunca los dos de directorio a la vez. **El disparador del `CLAUDE.md` de directorio es la ubicación
+del trabajo**, y eso es exactamente lo que la pregunta guía va a contrastar contra los globs.
+
+### Paso 5 — `@import`, con un caso real de duplicación
+
+El raíz termina con:
 
 ```markdown
-# Login demo — monorepo
-
-- Tres piezas independientes: `web/` (TypeScript), `api/` (Python), `infra/` (Terraform).
-  Cada una tiene su propio `CLAUDE.md` con sus convenciones.
-- Ningún módulo cruza fronteras: el front habla con la API por HTTP, nada más.
-- Los mensajes de commit van en imperativo y en español.
-- Usuarios de prueba: `ana@sofka.com.co` / `luis@sofka.com.co`, contraseña `demo1234`.
+@docs/usuarios-de-prueba.md
 ```
 
-6. Escribir **`api/CLAUDE.md`** en vivo:
+Abrir `docs/usuarios-de-prueba.md`: los usuarios de prueba, las contraseñas y cómo agregar uno. Ese
+contenido lo necesitan **el `CLAUDE.md` y el `README.md`**, y antes estaba escrito en los dos. Ahora
+vive en un archivo y los dos apuntan ahí. `@import` no es un truco de sintaxis: **es para no tener
+la misma verdad en dos lugares que se desincronizan.**
 
-```markdown
-# api — Python + FastAPI
+Mostrar en `/memory` que el archivo importado aparece listado, no escondido: lo que se importa se
+carga, y **cuenta en el presupuesto de contexto igual que si lo hubieras pegado**. Por eso no se
+importa el `README` completo ni un documento de 700 líneas.
 
-- Se corre con `uv run uvicorn app.main:app --reload`.
-- `app/main.py` es punto de entrada: sin lógica de negocio. La verificación va en `app/auth.py`.
-- Tests con **pytest**, en `tests/`.
-- `JWT_SECRET` se lee de entorno. Nunca hardcodearlo ni loggearlo.
-```
-
-7. **La demostración de la jerarquía.** Pedir un cambio en `api/app/auth.py` y correr `/memory`:
-   se cargaron **los dos** archivos. Después pedir algo en `web/src/login.ts` y `/memory` de nuevo:
-   solo el raíz. El disparador del `CLAUDE.md` de directorio es **la ubicación**.
-
-8. `git checkout configurado` para revelar los tres por directorio ya escritos, y mostrar
-   `infra/CLAUDE.md` — el que nadie quiere cargar cuando está tocando TypeScript.
-
-**Ítems de examen que quedan contestados acá:**
+### Ítems de examen que quedan contestados acá
 
 | Caso | Respuesta a fijar |
 |---|---|
@@ -103,15 +126,14 @@ Niveles completos, por si preguntan: `~/.claude/CLAUDE.md` (usuario) · `CLAUDE.
 `.claude/CLAUDE.md` (proyecto, siempre cargados) · `subdir/CLAUDE.md` (por directorio) ·
 `CLAUDE.local.md` (siempre cargado, no versionado) · `.claude/rules/*.md`.
 
----
-
 ## Bloque 2 — Reglas con globs (0:35 – 0:50)
 
 Arrancar con la pregunta que deja el bloque anterior abierto:
 
 > *"Ya tengo un `CLAUDE.md` por carpeta. ¿Para qué querría además una regla?"*
 
-Y la respuesta se construye con las tres reglas que están en la rama `configurado`.
+Y la respuesta son las tres reglas que ya están escritas en `.claude/rules/`. Se abren y se
+explican; lo que se demuestra en vivo es cuál se carga y cuál no.
 
 ### Regla 1 — el caso empatado, para ser honesto
 
@@ -202,8 +224,8 @@ de contenido → tres archivos de regla con su `paths`).
 
 ## Bloque 3 — Commands y skills (0:50 – 1:05)
 
-Cuatro artefactos, y están **todos escritos ya** en la rama `configurado`. No se tipean en vivo: se
-muestran, se comparan y se corren. Lo que se demuestra es el criterio, no el tecleo.
+Cuatro artefactos, todos ya escritos en `.claude/`. No se tipean en vivo: se muestran, se comparan
+y se corren. Lo que se demuestra es el criterio, no el tecleo.
 
 ### 1. El command pelado — `/revisar-login`
 
@@ -355,7 +377,8 @@ underscore naranja, CTA `#FF6B2B`, contraste AA. Mismo repo, mismas dos skills, 
 
 ⚠️ **Este paso NO está verificado todavía.** Probarlo antes de la sesión.
 
-Crear la regla en vivo:
+Es el único momento en que se agrega un archivo delante de la sala, y son cuatro líneas:
+`.claude/rules/paginas-web.md`
 
 ```yaml
 ---
@@ -411,6 +434,12 @@ exploratorias → `context: fork`) · `EX-044` (skill que genera docs desde el c
 
 En **el repo propio** de cada uno, no en este. Entregable: `CLAUDE.md` de proyecto corto + al menos
 una regla con `paths` **verificada** sobre un archivo que matchea y otro que no.
+
+> **Ojo con esto:** como no se tipeó nada en vivo, nadie tiene un template a mano cuando llega este
+> bloque. Antes de largarlos, pegá en el canal las cuatro piezas mínimas —el `CLAUDE.md` raíz, un
+> `subdir/CLAUDE.md`, una regla con `paths` y el bloque de frontmatter de una skill— o compartí una
+> copia del repo **sin `.instructor/`**. Sin eso, los primeros cinco minutos de la práctica se van
+> en recordar la sintaxis del frontmatter.
 
 Mientras circulás, la pregunta útil no es "¿te funciona?" sino
 **"¿por qué eso es una regla y no una línea del `CLAUDE.md`?"**.
