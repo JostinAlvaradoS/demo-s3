@@ -202,23 +202,40 @@ de contenido → tres archivos de regla con su `paths`).
 
 ## Bloque 3 — Commands y skills (0:50 – 1:05)
 
-### El command primero, que es el simple
+Cuatro artefactos, y están **todos escritos ya** en la rama `configurado`. No se tipean en vivo: se
+muestran, se comparan y se corren. Lo que se demuestra es el criterio, no el tecleo.
 
-```bash
-mkdir -p .claude/commands
-cat > .claude/commands/revisar-login.md <<'EOF'
-Revisá el flujo de login completo, cruzando las tres carpetas:
-- web/src/login.ts: validaciones de cliente y manejo del token.
-- api/app/auth.py: verificación de credenciales y emisión del JWT.
-- infra/: dónde vive el secreto de firma.
-Reportá archivo:línea y la corrección concreta. No cambies nada.
-EOF
+### 1. El command pelado — `/revisar-login`
+
+```
+.claude/commands/revisar-login.md    ← sin frontmatter, sin argumentos
 ```
 
-Correr `/revisar-login`. Es un prompt que **el usuario** invoca, y su valor es que cruza fronteras
-que ningún `CLAUDE.md` de directorio cruza. Ese es el `PE-004`.
+Es un archivo `.md` con un prompt adentro y nada más. Correrlo. Su valor: **cruza las tres
+carpetas** —`web/src/login.ts`, `api/app/auth.py`, `infra/`— que es exactamente lo que ningún
+`CLAUDE.md` de directorio puede hacer. Ese es el `PE-004`: una checklist que dispara el humano.
 
-### La skill: mostrar que es un directorio
+### 2. El command con argumentos — `/tests`
+
+```yaml
+---
+description: Corre los tests del stack que se indique y resume solo lo que falló
+argument-hint: "[web|api|todo]"
+allowed-tools: Bash(npm test*), Bash(uv run pytest*), Read
+---
+Corré los tests de: $ARGUMENTS
+```
+
+Correr `/tests api` y después `/tests` sin argumento. Tres cosas que quedan a la vista:
+
+- **`$ARGUMENTS`** es la sustitución. Lo que el usuario tipea después del comando entra ahí.
+- **`argument-hint`** es lo que se ve en el autocompletado. No cambia el comportamiento: cambia si
+  alguien acierta a usarlo.
+- **`allowed-tools` con patrones**, no con herramientas peladas: `Bash(npm test*)` y no `Bash`. Este
+  command puede correr los tests y **nada más** — no puede hacer `git push` ni borrar un archivo.
+  Es el mismo principio de mínimo privilegio que la Semana 5 va a exigir como política.
+
+### 3. La skill de referencia — `sofka-branding`, sin fork
 
 ```
 .claude/skills/sofka-branding/
@@ -229,22 +246,54 @@ que ningún `CLAUDE.md` de directorio cruza. Ese es el `PE-004`.
 ```
 
 *"¿Cuánto de esas 672 líneas está en el contexto ahora?"* → **119 palabras**, solo la `description`.
-Capacidad bajo demanda, medida en líneas. El cuerpo entra al activarse; los `references/` solo si la
-tabla interna del SKILL.md dice que hacen falta.
+Capacidad bajo demanda, medida en líneas.
 
-### Los tres campos, por lo que hacen
+Y la pregunta que parece trampa: **¿por qué esta skill NO tiene `context: fork`?** Porque su
+producto son **reglas que tienen que estar donde se hace el trabajo**. Forkeada, volvería un resumen
+y la página saldría sin la paleta. Vacuna contra "fork siempre es mejor".
 
-- **`description`** — lo único que decide si la skill se activa. Mismo mecanismo que la descripción
-  de una tool (kata 21). **No describe: dispara.**
-- **`context: fork`** — corre en subagente aislado, vuelve solo la salida final. Es el `PE-043`.
-- **`allowed-tools`** — mínimo privilegio, **con patrones**: `Bash(gh pr *)`, no `Bash` pelado.
+### 4. La skill generativa — `scaffold-endpoint`, con fork
 
-### Por qué `sofka-branding` NO tiene `context: fork`, y está bien
+```yaml
+---
+name: scaffold-endpoint
+description: >
+  Agrega un endpoint nuevo a la API de FastAPI siguiendo las convenciones ya establecidas...
+context: fork
+allowed-tools: [Read, Glob, Grep, Write]
+argument-hint: "<nombre-del-endpoint>"
+---
+```
 
-Preguntarlo a la sala. Porque es una skill de **referencia**: su producto son reglas que tienen que
-estar *donde se hace el diseño*. Forkeada, volvería un resumen y la página saldría sin la paleta.
-`fork` sirve cuando el producto es **un resultado final** y el trabajo intermedio es descartable.
-Vacuna contra "fork siempre es mejor", el error que sigue al `PE-043`.
+Su cuerpo la obliga a **cinco lecturas exploratorias antes de escribir nada**: el `api/CLAUDE.md`,
+el `main.py` para copiar el estilo de rutas, el `auth.py` para ver dónde va la lógica, un Grep de
+`HTTPException`, y un test existente para copiar la convención de nombres. Después escribe tres
+archivos.
+
+Correrla: `/scaffold-endpoint perfil` — o mejor, pedir *"agregá un endpoint de perfil de usuario"* y
+que se active sola por la `description`.
+
+**Lo que hay que hacer notar cuando termina:** volvió **un resumen de tres líneas**. Las cinco
+lecturas, el Grep y el contenido intermedio ocurrieron en el subagente y **no están en el contexto
+principal**. Eso es `context: fork`, y es el `PE-043` textual.
+
+### El contraste, que es la lección del bloque
+
+| | `sofka-branding` | `scaffold-endpoint` |
+|---|---|---|
+| Qué produce | **Reglas** para usar acá mismo | **Archivos**, un resultado final |
+| Trabajo intermedio | No tiene | Cinco lecturas y un Grep, descartables |
+| `context: fork` | **No** — el resumen perdería la paleta | **Sí** — solo importa el resultado |
+
+Mismo mecanismo, decisión opuesta. **Y lo que decide no es el tamaño de la skill: es qué es su
+producto.** Si el producto tiene que quedar en el contexto, no forkeás. Si el producto es un
+artefacto y el camino es basura, forkeás.
+
+> **Nota para el participante despierto.** `scaffold-endpoint` escribe archivos, o sea que tiene
+> efectos. La guía de Claude Code recomienda para esos casos agregar `disable-model-invocation: true`
+> para que **solo el usuario** pueda dispararla — y ahí es, a todos los efectos, un slash command
+> con superpoderes. Decirlo si preguntan, y no antes: si lo pones al frente, embarrás la tabla de
+> decisión que es criterio de salida.
 
 ---
 
