@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bienvenidos | Sofka Technologies</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --sofka-orange: #FF6B2B;
+      --sofka-orange-dark: #E55A1C;
+      --sofka-navy: #1C1C3C;
+      --sofka-navy-mid: #2A2A5A;
+      --sofka-blue-accent: #3B3B7A;
+      --white: #FFFFFF;
+      --mid-gray: #9B9BA8;
+      --hero-gradient: linear-gradient(135deg, #1C1C3C 0%, #2A2A5A 50%, #1C1C3C 100%);
+      --orange-accent-gradient: linear-gradient(90deg, #FF6B2B 0%, #FF8C5A 100%);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background: var(--hero-gradient);
+      color: var(--white);
+      font-family: "Poppins", system-ui, sans-serif;
+      font-weight: 400;
+    }
+
+    /* Logo con clearspace = altura del underscore */
+    header {
+      padding: 40px clamp(24px, 5vw, 64px);
+    }
+
+    .logo {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      line-height: 1;
+    }
+
+    .logo span {
+      color: var(--sofka-orange);
+    }
+
+    main {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0 clamp(24px, 5vw, 64px) 64px;
+    }
+
+    .hero {
+      max-width: 1280px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+
+    /* Motivo radial "sol" de la marca */
+    .sun {
+      display: block;
+      margin: 0 auto 32px;
+      width: 72px;
+      height: 72px;
+      opacity: 0.9;
+    }
+
+    .overline {
+      font-size: 14px;
+      font-weight: 600;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--sofka-orange);
+      margin: 0 0 20px;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 9vw, 4.5rem);
+      line-height: 1.1;
+      font-weight: 800;
+      margin: 0;
+      letter-spacing: -0.02em;
+    }
+
+    h1 .accent {
+      background: var(--orange-accent-gradient);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    .subtitle {
+      font-size: 1.125rem;
+      line-height: 1.6;
+      color: var(--mid-gray);
+      max-width: 46ch;
+      margin: 24px auto 0;
+    }
+
+    .rule {
+      width: 96px;
+      height: 4px;
+      background: var(--sofka-orange);
+      border: 0;
+      margin: 40px auto 0;
+    }
+
+    .claim {
+      font-size: 1.125rem;
+      font-weight: 500;
+      margin: 40px 0 0;
+    }
+
+    .cta {
+      display: inline-block;
+      margin-top: 40px;
+      padding: 16px 32px;
+      background: var(--sofka-orange);
+      color: var(--white);
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.25;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      min-height: 44px;
+    }
+
+    .cta:hover { background: var(--sofka-orange-dark); }
+    .cta:active { transform: translateY(1px); }
+    .cta:focus-visible { outline: 2px solid var(--sofka-orange); outline-offset: 4px; }
+
+    footer {
+      border-top: 1px solid var(--sofka-blue-accent);
+      padding: 24px clamp(24px, 5vw, 64px);
+      font-size: 0.75rem;
+      line-height: 1.5;
+      color: var(--mid-gray);
+      text-align: center;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">sofka<span>_</span></div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <svg class="sun" viewBox="0 0 72 72" aria-hidden="true" focusable="false">
+        <g stroke="#FF6B2B" stroke-width="3" stroke-linecap="square">
+          <line x1="36" y1="4"  x2="36" y2="16"/>
+          <line x1="36" y1="56" x2="36" y2="68"/>
+          <line x1="4"  y1="36" x2="16" y2="36"/>
+          <line x1="56" y1="36" x2="68" y2="36"/>
+          <line x1="13" y1="13" x2="22" y2="22"/>
+          <line x1="50" y1="50" x2="59" y2="59"/>
+          <line x1="13" y1="59" x2="22" y2="50"/>
+          <line x1="50" y1="22" x2="59" y2="13"/>
+        </g>
+        <circle cx="36" cy="36" r="8" fill="#FF6B2B"/>
+      </svg>
+
+      <p class="overline">Your technology companion</p>
+      <h1>Bienvenidos a <span class="accent">Sofka</span></h1>
+      <p class="subtitle">
+        Transformamos organizaciones con tecnologia, agilidad y talento humano.
+        Kaizen: pasos pequenos y constantes, todos los dias.
+      </p>
+      <hr class="rule">
+      <p class="claim">Better happens every day.</p>
+      <a class="cta" href="#">Conoce mas</a>
+    </section>
+  </main>
+
+  <footer>
+    &copy; 2026 Sofka Technologies. Todos los derechos reservados.
+  </footer>
+</body>
+</html>
