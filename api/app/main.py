@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
 from app.auth import issue_token, verify_credentials
+from app.saludo import saludar
 
 app = FastAPI(title="Login demo")
 
@@ -18,6 +19,11 @@ def login(body: LoginRequest):
     if not verify_credentials(body.email, body.password):
         raise HTTPException(status_code=401, detail="Credenciales inválidas")
     return {"token": issue_token(body.email)}
+
+
+@app.get("/saludo")
+def saludo():
+    return {"mensaje": saludar()}
 
 
 @app.get("/health")

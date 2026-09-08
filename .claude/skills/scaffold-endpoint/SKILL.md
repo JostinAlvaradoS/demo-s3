@@ -13,6 +13,11 @@ argument-hint: "<nombre-del-endpoint>"
 
 Endpoint a crear: `$ARGUMENTS`
 
+**Si eso quedó vacío, pará acá.** `argument-hint` es una ayuda visual, no una validación: nadie
+garantiza que llegue un nombre. No adivines, no inventes un nombre y no escribas ningún archivo —
+devolvé una sola línea pidiendo el nombre del endpoint. Corriendo en `fork` no podés preguntar a
+mitad de camino, así que la única salida segura es no hacer nada.
+
 Esta skill define el **procedimiento**, no las convenciones. Las convenciones del stack las manda
 `api/CLAUDE.md` y las de testing `.claude/rules/tests.md`: se cargan solas al tocar esos archivos y
 no se repiten acá. Si hay que cambiar una convención, se cambia allá y esta skill la sigue sin
