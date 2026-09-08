@@ -114,6 +114,36 @@ Mostrar en `/memory` que el archivo importado aparece listado, no escondido: lo 
 carga, y **cuenta en el presupuesto de contexto igual que si lo hubieras pegado**. Por eso no se
 importa el `README` completo ni un documento de 700 líneas.
 
+### La pregunta que va a salir: "¿el personal no tapa al del proyecto?"
+
+Sale siempre, y la respuesta corta es **no: no hay override, hay acumulación.** Los archivos
+aplicables se cargan todos y quedan juntos en el contexto. Nada se pierde, nada se sobrescribe.
+
+Claude Code distingue **tipos** de memoria —Managed/policy (de la organización, no se puede
+excluir), User (`~/.claude/CLAUDE.md`), Project (`CLAUDE.md`, `.claude/CLAUDE.md`,
+`.claude/rules/`) y Local (`CLAUDE.local.md`)— pero el tipo define **de dónde viene y si se puede
+excluir**, no quién gana una pelea de contenido.
+
+**El riesgo real no es la pérdida, es la contradicción.** Si tu archivo personal dice "los tests con
+jest" y el del proyecto dice vitest, las dos instrucciones están en contexto y **el empate lo
+resuelve el modelo, no una regla de precedencia**. Ahí sí el comportamiento se vuelve impredecible.
+
+Y de ahí sale el criterio de diseño, que es lo que hay que dejar dicho:
+
+| Archivo | De qué habla | Ejemplo |
+|---|---|---|
+| Personal (`~/.claude/CLAUDE.md`) | **Cómo quiero que me hablen** | idioma, tono, mostrame el plan antes de un cambio grande |
+| Proyecto (`CLAUDE.md`) | **Cómo tiene que ser el código** | runner de tests, comandos, convenciones, límites |
+
+Dominios que no se pisan. Si no se pisan, no hay empate que resolver.
+
+> Dos precisiones para no confundir a nadie:
+> - **Sí existe una precedencia documentada, pero es para `settings.json`** (permisos, hooks,
+>   variables), no para el contenido de los `CLAUDE.md`. No mezclar las dos cosas.
+> - El `PE-041` **no** dice que las instrucciones se pierdan por override. Dice que **el equipo no
+>   las recibe**: el que clona el repo no tiene tu `~/.claude/`. El problema es de **distribución**,
+>   no de que algo tape a algo.
+
 ### Ítems de examen que quedan contestados acá
 
 | Caso | Respuesta a fijar |
