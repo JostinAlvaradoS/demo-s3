@@ -1,0 +1,8 @@
+node_modules/
+__pycache__/
+.venv/
+dist/
+.env
+*.tfvars
+!*.tfvars.example
+.terraform/

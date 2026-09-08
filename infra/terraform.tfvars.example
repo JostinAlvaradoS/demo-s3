@@ -1,0 +1,2 @@
+entorno    = "dev"
+jwt_secret = ""
