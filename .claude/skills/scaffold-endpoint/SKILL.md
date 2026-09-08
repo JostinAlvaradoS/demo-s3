@@ -13,21 +13,28 @@ argument-hint: "<nombre-del-endpoint>"
 
 Endpoint a crear: `$ARGUMENTS`
 
-## Antes de escribir una sola línea, explorá
+Esta skill define el **procedimiento**, no las convenciones. Las convenciones del stack las manda
+`api/CLAUDE.md` y las de testing `.claude/rules/tests.md`: se cargan solas al tocar esos archivos y
+no se repiten acá. Si hay que cambiar una convención, se cambia allá y esta skill la sigue sin
+tocarse.
 
-1. Leé `api/CLAUDE.md`: las convenciones del stack manda ese archivo, no tu criterio.
-2. Leé `api/app/main.py` para copiar el estilo de declaración de rutas y el manejo de errores.
-3. Leé `api/app/auth.py` para ver cómo se estructura la lógica que vive fuera del punto de entrada.
-4. Buscá con Grep los usos de `HTTPException` para replicar los códigos y los mensajes.
-5. Leé `api/tests/test_auth.py` para copiar el estilo de los tests y la convención de nombres.
+## 1. Explorar antes de escribir
 
-## Después escribí
+En este orden, y sin saltarse pasos:
 
-- `api/app/<nombre>.py` con la lógica. Nada de lógica en `main.py`.
-- `api/tests/test_<nombre>.py` con al menos un caso feliz y un caso de error.
-- El registro de la ruta en `api/app/main.py`, en el mismo estilo que las existentes.
+1. `api/CLAUDE.md` — las convenciones del stack. Manda ese archivo, no tu criterio.
+2. `api/app/main.py` — el estilo de declaración de rutas y cómo se propagan los errores.
+3. `api/app/auth.py` — cómo se estructura un módulo de lógica y qué expone.
+4. Grep de `HTTPException` — los códigos y los mensajes que ya se usan, para no inventar otros.
+5. Un test existente de `api/tests/` — el estilo de armado y de aserción.
 
-## Reportá
+## 2. Producir
+
+- `api/app/<nombre>.py` con la lógica del endpoint.
+- `api/tests/test_<nombre>.py` cubriendo, como mínimo, el camino feliz y un camino de error.
+- El registro de la ruta en `api/app/main.py`.
+
+## 3. Reportar
 
 Solo los archivos creados o modificados, una línea por archivo diciendo qué quedó en cada uno.
 No pegues el contenido: quien te invocó ya puede leerlo.
