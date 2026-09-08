@@ -229,6 +229,39 @@ archivo?"*:
 | `infra/main.tf` | La de Terraform |
 | `web/src/api.ts` | Ninguna de las tres |
 
+### Cómo ver exactamente qué cargó — el instrumental
+
+Tres comandos, en orden de rigor creciente. Vale la pena presentarlos como **el instrumental de la
+sesión**, porque son lo que separa afirmar de demostrar:
+
+| Comando | Qué te dice |
+|---|---|
+| `/memory` | **Qué** archivos cargó: los `CLAUDE.md` y los `.claude/rules/`, por nivel |
+| `/context` · `/context all` | **Cuánto pesa** cada cosa: `System prompt`, `Memory files`, `Skills`, `MCP tools`, `Custom agents`, `Messages`, `Free space` |
+| `/skills` | Qué skills están cargadas y de qué nivel viene cada una |
+
+Para el forense completo: `claude --debug` (con `--debug-file` o `--debug-to-stderr` para volcarlo).
+
+**`/context` es el que convierte afirmaciones en números**, y sirve dos veces en la sesión:
+
+- En el Bloque 3, la línea `Skills` demuestra que de las 672 líneas de `sofka-branding` solo pesa la
+  `description`. Y demuestra que **cada skill instalada paga en cada turno**: se ve el costo de
+  tener tres, y se ve bajar si desactivás una en `/skills`.
+- Acá, en el Bloque 2, como verificación medida en vez de narrada:
+
+  1. `/context` al abrir → anotar el peso de `Memory files`.
+  2. Pedir un cambio en `api/app/auth.py` → `/context`.
+  3. Pedir un cambio en `web/src/login.test.ts` → `/context`.
+
+  Si `Memory files` crece en el paso 3, ahí está la regla inyectándose.
+
+> ⚠️ **Sin verificar.** Está confirmado que los comandos existen y cuáles son las líneas del
+> desglose. **No** está confirmado que `Memory files` suba cuando se dispara una regla por `paths` —
+> puede que ese contador solo mida lo que carga siempre. Probalo antes: abrí `claude` en el repo,
+> `/context`, pedí un cambio en `web/src/login.test.ts`, `/context` de nuevo. Si el número no se
+> mueve, el verificador vuelve a ser `/memory` más la pregunta directa a Claude, y entonces hay que
+> decir en voz alta que eso es **testimonio, no traza**.
+
 ### ⚠️ Gotcha verificado — la regla se engancha a las herramientas de archivo, NO a Bash
 
 Probado contra Claude Code 2.1.263:
