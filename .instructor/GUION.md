@@ -137,12 +137,15 @@ Y de ahí sale el criterio de diseño, que es lo que hay que dejar dicho:
 
 Dominios que no se pisan. Si no se pisan, no hay empate que resolver.
 
-> Dos precisiones para no confundir a nadie:
-> - **Sí existe una precedencia documentada, pero es para `settings.json`** (permisos, hooks,
->   variables), no para el contenido de los `CLAUDE.md`. No mezclar las dos cosas.
-> - El `PE-041` **no** dice que las instrucciones se pierdan por override. Dice que **el equipo no
->   las recibe**: el que clona el repo no tiene tu `~/.claude/`. El problema es de **distribución**,
->   no de que algo tape a algo.
+> **Precisión que sí conviene dejar dicha:** el `PE-041` **no** dice que las instrucciones se pierdan
+> por override. Dice que **el equipo no las recibe**: el que clona el repo no tiene tu `~/.claude/`.
+> El problema es de **distribución**, no de que algo tape a algo. Son dos fallas distintas y el
+> examen pregunta la segunda.
+>
+> **Y esto NO lo saques vos:** existe una precedencia documentada para la *configuración* de la
+> herramienta, pero no es lo mismo que el contenido de los `CLAUDE.md` y pertenece a la Sesión 4.
+> Si alguien pregunta por precedencia, la respuesta es "para el contenido de la memoria no hay
+> ganador, se acumula; la precedencia de configuración la vemos el jueves". No abrir el tema.
 
 ### Ítems de examen que quedan contestados acá
 
