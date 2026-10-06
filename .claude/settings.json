@@ -24,13 +24,13 @@
         ]
       }
     ],
-    "PostToolUse": [
+    "PreToolUse": [
       {
         "matcher": "Edit|Write",
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/vigia.py avisar"
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/vigia.py impedir"
           }
         ]
       }
