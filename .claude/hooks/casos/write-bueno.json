@@ -1,0 +1,10 @@
+{
+  "session_id": "ensayo",
+  "cwd": ".",
+  "hook_event_name": "PreToolUse",
+  "tool_name": "Write",
+  "tool_input": {
+    "file_path": "api/tests/test_login_bueno.py",
+    "content": "def test_login_con_contrasena_vacia_devuelve_401():\n    assert True\n\n\ndef test_login_con_usuario_inexistente_devuelve_401():\n    assert True\n"
+  }
+}

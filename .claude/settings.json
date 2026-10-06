@@ -1,7 +1,10 @@
 {
   "permissions": {
     "defaultMode": "default",
-    "allow": ["Bash(npm test *)", "Bash(uv run pytest *)"],
+    "allow": [
+      "Bash(npm test *)",
+      "Bash(uv run pytest *)"
+    ],
     "deny": [
       "Read(./api/.env)",
       "Edit(./infra/*.tfvars)",
@@ -14,7 +17,21 @@
       {
         "matcher": "startup",
         "hooks": [
-          { "type": "command", "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/paso-actual.sh" }
+          {
+            "type": "command",
+            "command": "\"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/paso-actual.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"${CLAUDE_PROJECT_DIR}\"/.claude/hooks/vigia.py observar"
+          }
         ]
       }
     ]
