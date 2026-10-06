@@ -1,6 +1,6 @@
 {
   "permissions": {
-    "defaultMode": "default",
+    "defaultMode": "plan",
     "allow": [
       "Bash(npm test *)",
       "Bash(uv run pytest *)"
