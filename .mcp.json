@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "usuarios": {
+      "type": "stdio",
+      "command": "uv",
+      "args": ["run", "--directory", "api", "python", "mcp_usuarios.py"],
+      "env": { "USUARIOS_PATH": "${USUARIOS_PATH:-docs/usuarios-de-prueba.md}" }
+    },
+    "github": {
+      "type": "http",
+      "url": "https://api.githubcopilot.com/mcp/",
+      "headers": { "Authorization": "Bearer ghp_EJEMPLO_pegado_en_el_repo_0000000000" }
+    }
+  }
+}
